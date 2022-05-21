@@ -1,11 +1,7 @@
-﻿//using AngleSharp.Html.Parser;
+﻿using AngleSharp.Html.Parser;
 //using HtmlAgilityPack;
 using ManagedCommon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Web;
 using Wox.Plugin;
 
@@ -18,25 +14,36 @@ namespace naari3.TrJpWiki
         static readonly Uri WIKI_HOST = new Uri("http://terraria.arcenserv.info/");
 
         private PluginInitContext Context { get; set; }
-        public string Name => "Guid";
+        public string Name => "Terraria Jp Wiki";
 
-        public string Description => "Guid Generator";
+        public string Description => "Terraria Jp Wiki";
 
         public List<Result> Query(Query query)
         {
-            var searchResults = Search(query.RawQuery).Result;
-            var guid = System.Guid.NewGuid().ToString();
-            var guidUpper = guid.ToUpperInvariant();
+            if (query?.Search is null)
+            {
+                return new List<Result>(0);
+            }
+
+            var searchResults = Search(query.Search);
 
             var results = searchResults.Select(result =>
             {
                 return new Result
                 {
                     Title = result.title,
+                    SubTitle = result.detail,
                     IcoPath = IconPath,
                     Action = e =>
                     {
-                        System.Diagnostics.Process.Start(result.link);
+                        var pi = new ProcessStartInfo()
+                        {
+                            FileName = result.link,
+                            UseShellExecute = true,
+                        };
+
+                        Process.Start(pi);
+
                         return true;
                     },
                 };
@@ -54,14 +61,7 @@ namespace naari3.TrJpWiki
 
         private void UpdateIconPath(Theme theme)
         {
-            if (theme == Theme.Light || theme == Theme.HighContrastWhite)
-            {
-                IconPath = "images/guid.light.png";
-            }
-            else
-            {
-                IconPath = "images/guid.dark.png";
-            }
+            IconPath = "images/trjp.png";
         }
 
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
@@ -69,79 +69,37 @@ namespace naari3.TrJpWiki
             UpdateIconPath(newTheme);
         }
 
-        private async Task<IEnumerable<SearchResult>> Search(String keyword)
+        private IEnumerable<SearchResult> Search(String keyword)
         {
-            return new List<SearchResult> {
-                new SearchResult
+            try
+            {
+                var encodedKeyword = HttpUtility.UrlEncode(keyword);
+                var searchUrl = new Uri(WIKI_HOST, $"/w/index.php?title=%E7%89%B9%E5%88%A5%3A%E6%A4%9C%E7%B4%A2&redirs=0&search={encodedKeyword}&fulltext=Search&ns0=1");
+                var response = AsyncHelper.RunSync(() => client.GetAsync(searchUrl));
+                response.EnsureSuccessStatusCode();
+                var responseBody = AsyncHelper.RunSync(() => response.Content.ReadAsStringAsync());
+                var parser = new HtmlParser();
+                var doc = parser.ParseDocument(responseBody);
+                var resultDOMs = doc.QuerySelectorAll("ul.mw-search-results li");
+                return resultDOMs.Where(dom =>
+                    dom.QuerySelector("a") != null &&
+                    dom.QuerySelector(".searchresult") != null
+                ).Select(dom =>
                 {
-                    title = "test",
-                    detail = "detail",
-                    link = "https://example.com"
-                }
-            };
-            //try
-            //{
-            //    var encodedKeyword = HttpUtility.UrlEncode(keyword);
-            //    var searchUrl = new Uri(WIKI_HOST, $"/w/index.php?title=%E7%89%B9%E5%88%A5%3A%E6%A4%9C%E7%B4%A2&redirs=0&search={encodedKeyword}&fulltext=Search&ns0=1");
-            //    var response = await client.GetAsync(searchUrl);
-            //    response.EnsureSuccessStatusCode();
-            //    var responseBody = await response.Content.ReadAsStringAsync();
-            //    // Above three lines can be replaced with new helper method below
-            //    // string responseBody = await client.GetStringAsync(uri
-            //    var parser = new HtmlParser();
-            //    var doc = await parser.ParseDocumentAsync(responseBody);
-            //    var resultDOMs = doc.QuerySelectorAll("ul.mw-search-results li");
-            //    return resultDOMs.Select(dom =>
-            //    {
-            //        var link = new Uri(WIKI_HOST, dom.QuerySelector("a").GetAttribute("href"));
-            //        return new SearchResult
-            //        {
-            //            title = dom.QuerySelector("a").GetAttribute("a"),
-            //            detail = dom.QuerySelector(".searchresult").TextContent,
-            //            link = link.ToString()
-            //        };
-            //    });
-            //}
-            //catch (HttpRequestException e)
-            //{
-            //    Console.WriteLine("\nException Caught!");
-            //    Console.WriteLine("Message :{0} ", e.Message);
-            //    return new List<SearchResult>();
-            //}
+                    var link = new Uri(WIKI_HOST, dom.QuerySelector("a").GetAttribute("href"));
+                    return new SearchResult
+                    {
+                        title = dom.QuerySelector("a").GetAttribute("title"),
+                        detail = dom.QuerySelector(".searchresult").TextContent.Replace("\n", "").Replace("<br>", " "),
+                        link = link.ToString()
+                    };
+                });
+            }
+            catch (HttpRequestException e)
+            {
+                throw e;
+            }
         }
-
-        //private async Task<IEnumerable<SearchResult>> Search2(String keyword)
-        //{
-        //    try
-        //    {
-        //        var encodedKeyword = HttpUtility.UrlEncode(keyword);
-        //        var searchUrl = new Uri(WIKI_HOST, $"/w/index.php?title=%E7%89%B9%E5%88%A5%3A%E6%A4%9C%E7%B4%A2&redirs=0&search={encodedKeyword}&fulltext=Search&ns0=1");
-        //        var response = await client.GetAsync(searchUrl);
-        //        response.EnsureSuccessStatusCode();
-        //        var responseBody = await response.Content.ReadAsStringAsync();
-        //        // Above three lines can be replaced with new helper method below
-        //        // string responseBody = await client.GetStringAsync(uri
-        //        var doc = new HtmlDocument();
-        //        doc.LoadHtml(responseBody);
-        //        var resultDOMs = doc.DocumentNode.SelectNodes("//ul[@class='mw-search-results']/li");
-        //        return resultDOMs.Select(dom =>
-        //        {
-        //            var link = new Uri(WIKI_HOST, dom.SelectSingleNode("//a").GetAttributeValue("href", "/"));
-        //            return new SearchResult
-        //            {
-        //                title = dom.SelectSingleNode("//a").GetAttributeValue("title", "Unknown"),
-        //                detail = dom.SelectSingleNode("//div[@class='.searchresult']").InnerText,
-        //                link = link.ToString()
-        //            };
-        //        });
-        //    }
-        //    catch (HttpRequestException e)
-        //    {
-        //        Console.WriteLine("\nException Caught!");
-        //        Console.WriteLine("Message :{0} ", e.Message);
-        //        return new List<SearchResult>();
-        //    }
-        //}
 
         private class SearchResult
         {
@@ -151,4 +109,3 @@ namespace naari3.TrJpWiki
         }
     }
 }
-

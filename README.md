@@ -1,18 +1,16 @@
-# Guid generator for PowerToys Run
+# Terraria JP Wiki Search for PowerToys Run
 
-A Guid generator for PowerToys Run. Simply invoke the command `guid` and get a freshly generated Guid to use.
-
-![Using Guid generator for PowerToys Run](/assets/screenshot.png?raw=true)
+A Terraria JP Wiki Search for PowerToys Run. Simply invoke the command `guid` and get a freshly generated Guid to use.
 
 ## Installation
 
 **Minimum required version of PowerToys is 0.53.1 - make sure you've got this version installed.**
 
-Exit PowerToys, and save [naari3.TrJpWiki.zip](https://github.com/skttl/ptrun-guid/releases/download/0.1.0/naari3.TrJpWiki.zip) to `%PROGRAMFILES%\PowerToys\modules\launcher\Plugins` (or wherever your PowerToys is installed), and start PowerToys.
+Exit PowerToys, and save [naari3.TrJpWiki.zip](https://github.com/naari3/terraria-ja-wiki-PowerToysRun/releases/download/0.1.0/naari3.TrJpWiki.zip) to `%PROGRAMFILES%\PowerToys\modules\launcher\Plugins` (or wherever your PowerToys is installed), and start PowerToys.
 
 ## Usage
 
-Open up PowerToys Run, and type the command `guid`. The generator will generate a Guid, and present to you in both lowercase and uppercase. Select the one you want, and press Enter to copy to your clipboard.
+Open up PowerToys Run, and type the command prefix `trjp` and what word you want to search(example: `trjp Gold`). It will shows search result on WIki. Select the one you want, and press Enter to open that page on Browser.
 
 ## Contributing
 
