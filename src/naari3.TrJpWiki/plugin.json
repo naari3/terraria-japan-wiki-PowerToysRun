@@ -1,0 +1,14 @@
+{
+  "ID": "EF1F634F20484459A3679B4FE7B07997",
+  "Disabled": false,
+  "ActionKeyword": "trjp",
+  "Name": "TrJpWiki",
+  "Author": "naari3",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/naari3/powertoys-run-guid",
+  "ExecuteFileName": "naari3.TrJpWiki.dll",
+  "IsGlobal": true,
+  "IcoPathDark": "images\\guid.dark.png",
+  "IcoPathLight": "images\\guid.light.png"
+}
