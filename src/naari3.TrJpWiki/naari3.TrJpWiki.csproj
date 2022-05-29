@@ -56,4 +56,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="ILRepacker">
+    <Exec Command="del /Q &quot;$(TargetDir)AngleSharp.dll&quot;&#xD;&#xA; del /Q &quot;$(TargetDir)HtmlAgilityPack.dll&quot;&#xD;&#xA; del /Q &quot;$(TargetDir)*.pdb&quot;&#xD;&#xA; del /Q &quot;$(TargetDir)PowerToys*.dll&quot;&#xD;&#xA; del /Q &quot;$(TargetDir)Wox*.dll&quot;&#xD;&#xA;" />
+  </Target>
 </Project>
