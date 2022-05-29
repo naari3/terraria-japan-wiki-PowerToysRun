@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Html.Parser;
-//using HtmlAgilityPack;
 using ManagedCommon;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Web;
 using Wox.Plugin;
 
@@ -9,11 +9,11 @@ namespace naari3.TrJpWiki
 {
     public class Main : IPlugin
     {
-        private string IconPath { get; set; }
+        private string? IconPath { get; set; }
         static readonly HttpClient client = new HttpClient();
         static readonly Uri WIKI_HOST = new Uri("http://terraria.arcenserv.info/");
 
-        private PluginInitContext Context { get; set; }
+        private PluginInitContext? Context { get; set; }
         public string Name => "Terraria Jp Wiki";
 
         public string Description => "Terraria Jp Wiki";
@@ -86,11 +86,11 @@ namespace naari3.TrJpWiki
                     dom.QuerySelector(".searchresult") != null
                 ).Select(dom =>
                 {
-                    var link = new Uri(WIKI_HOST, dom.QuerySelector("a").GetAttribute("href"));
+                    var link = new Uri(WIKI_HOST, dom.QuerySelector("a")!.GetAttribute("href"));
                     return new SearchResult
                     {
-                        title = dom.QuerySelector("a").GetAttribute("title"),
-                        detail = dom.QuerySelector(".searchresult").TextContent.Replace("\n", "").Replace("<br>", " "),
+                        title = dom.QuerySelector("a")!.GetAttribute("title"),
+                        detail = dom.QuerySelector(".searchresult")!.TextContent.Replace("\n", "").Replace("<br>", " "),
                         link = link.ToString()
                     };
                 });
@@ -103,9 +103,9 @@ namespace naari3.TrJpWiki
 
         private class SearchResult
         {
-            public string title;
-            public string detail;
-            public string link;
+            public string? title;
+            public string? detail;
+            public string? link;
         }
     }
 }

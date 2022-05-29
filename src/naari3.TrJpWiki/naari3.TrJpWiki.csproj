@@ -1,46 +1,59 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <useWPF>true</useWPF>
+    <RootNamespace>naari3.TrJpWiki</RootNamespace>
+    <AssemblyName>naari3.TrJpWiki</AssemblyName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AngleSharp" Version="0.16.1" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
-	</ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Reference Include="PowerToys.Common.UI">
-			<HintPath>..\libs\PowerToys.Common.UI.dll</HintPath>
-		</Reference>
-		<Reference Include="PowerToys.ManagedCommon">
-			<HintPath>..\libs\PowerToys.ManagedCommon.dll</HintPath>
-		</Reference>
-		<Reference Include="Wox.Infrastructure">
-			<HintPath>..\libs\Wox.Infrastructure.dll</HintPath>
-		</Reference>
-		<Reference Include="Wox.Plugin">
-			<HintPath>..\libs\Wox.Plugin.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<None Update="images\trjp.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="plugin.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.16.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="PowerToys.Common.UI">
+      <HintPath>..\libs\PowerToys.Common.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerToys.ManagedCommon">
+      <HintPath>..\libs\PowerToys.ManagedCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="Wox.Infrastructure">
+      <HintPath>..\libs\Wox.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Wox.Plugin">
+      <HintPath>..\libs\Wox.Plugin.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ILRepack" Version="2.0.18" />
-	</ItemGroup>
-	<Target Name="ILMergeRelease">
-		<Exec Command="$(ILRepack) /out:bin\Release\net6.0-windows\naari3.TrJpWiki.dll bin\Release\net6.0-windows\naari3.TrJpWiki.dll bin\Release\net6.0-windows\AngleSharp.dll bin\Release\net6.0-windows\HtmlAgilityPack.dll /lib:&quot;C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.5\ref\net6.0&quot;" />
-	</Target>
+  <ItemGroup>
+    <None Update="images\trjp.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="plugin.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
